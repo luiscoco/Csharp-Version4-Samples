@@ -1,84 +1,112 @@
 # C# 4.0 Features – Sample Projects
 
-This repository demonstrates the language features introduced in **C# 4.0** (shipped with .NET Framework 4 / VS 2010).  
-C# 4.0 focused on *interoperability* and *flexibility*: dynamic binding, named/optional parameters, generic variance, and easier COM interop.
+This repository demonstrates the language features introduced in **C# version 4.0** (Visual Studio 2010 / .NET Framework 4).  
+C# 4.0 focused on interop, flexibility, and variance: the `dynamic` type, named/optional parameters, generic variance, and improved overload resolution.
+
+Projects included:
+- `P61_DynamicBasics`
+- `P62_NamedOptionalArgs`
+- `P63_GenericVariance_Interfaces`
+- `P64_DynamicOverloadResolution`
+- `P65_DynamicWithReflectionLike`
+- `P66_DelegatesVariance`
+- `P67_NamedArgsOverloadResolution`
 
 ---
 
-## 🚀 Key Features & Mini‑Examples
+## 🚀 Features & Samples
 
-### 1) `dynamic` – Dynamic binding at runtime
-- **What it is**: The `dynamic` type defers member binding until runtime (via the DLR). This enables cleaner interop with dynamic languages and COM APIs (Office, etc.), and lets you write duck-typed code in C#.
-- **Example**:
+### P61_DynamicBasics
+**Feature**: `dynamic` type – late binding at runtime.
 ```csharp
-dynamic x = "Hello";
-Console.WriteLine(x.Length);   // bound at runtime
+dynamic x = "hello";
+Console.WriteLine(x.Length);   // resolved at runtime
 
-dynamic excel = Activator.CreateInstance(Type.GetTypeFromProgID("Excel.Application"));
-excel.Visible = true;
-excel.Workbooks.Add();
+x = 123;
+Console.WriteLine(x + 5);      // int addition at runtime
 ```
-
-**Why it matters**: Interacting with COM or dynamic objects becomes terse and natural (no reflection or verbose marshaling).
-
----
-
-### 2) Named and Optional Arguments
-- **What it is**: Callers can specify arguments by *name* and omit parameters that have *default values*.
-- **Example**:
-```csharp
-void Log(string message, int level = 1, bool timestamp = true) { /* ... */ }
-
-Log("Started");                         // uses defaults
-Log(level: 3, message: "Verbose");      // named arguments out of order
-```
-**Why it matters**: Clearer call sites, easier API evolution (add parameters with defaults without breaking callers).
+**Purpose**: Avoids reflection boilerplate; useful for COM and runtime-constructed types.
 
 ---
 
-### 3) Generic Variance (interfaces & delegates)
-- **What it is**: Support for **covariance** (`out`) and **contravariance** (`in`) in interface and delegate type parameters.
-- **Example**:
+### P62_NamedOptionalArgs
+**Feature**: Named and optional arguments.
 ```csharp
-IEnumerable<string> strings = new List<string>();
-IEnumerable<object> objects = strings; // covariance (out T) allows this
-
-Action<object> ao = o => Console.WriteLine(o);
-Action<string>  asg = ao;              // contravariance (in T) allows this
-```
-**Why it matters**: More flexible assignment and API design for generics (e.g., LINQ, collections, delegates).
-
----
-
-### 4) Easier COM Interop (No PIA, ref elision, indexers)
-- **Embedded interop types (NoPIA)**: You can **embed interop types** in your assembly so users don’t need the full Primary Interop Assemblies installed.
-- **`ref`/`out` elision for COM**: Many COM calls no longer require explicit `ref`/`out` at call sites.
-- **COM indexers & properties**: Work more naturally, especially when combined with `dynamic`.
-- **Example** (illustrative Excel automation):
-```csharp
-dynamic excel = Activator.CreateInstance(Type.GetTypeFromProgID("Excel.Application"));
-excel.Visible = true;
-dynamic book = excel.Workbooks.Add();
-dynamic sheet = book.ActiveSheet;
-sheet.Cells[1, 1].Value = "Hello from C# 4.0";
-```
-**Why it matters**: Cleaner, version-resilient Office/COM automation without heavy interop assemblies or awkward syntax.
-
----
-
-### 5) Optional Parameters + `params` + Named args together
-- **What it is**: You can combine optional parameters with `params` and named arguments for very flexible APIs.
-- **Example**:
-```csharp
-void Notify(string title, string body = "", params string[] tags)
+void Print(string msg, int level = 1, bool timestamp = true)
 {
-    Console.WriteLine($"{title}: {body} [{string.Join(",", tags)}]");
+    Console.WriteLine($"{(timestamp ? DateTime.Now : "")}[{level}] {msg}");
 }
 
-Notify("Build");                         // body defaulted, no tags
-Notify("Deploy", tags: new[] { "prod" });
-Notify(body: "Done", title: "CI", tags: "ok", "fast");
+Print("Hello");                        // uses defaults
+Print(level: 3, msg: "Error", timestamp: false); // named, out of order
 ```
+**Purpose**: More flexible, self-documenting method calls.
+
+---
+
+### P63_GenericVariance_Interfaces
+**Feature**: Covariance (`out`) and contravariance (`in`) in generic interfaces.
+```csharp
+IEnumerable<string> words = new List<string> { "one", "two" };
+IEnumerable<object> objs = words; // covariance
+
+Action<object> log = o => Console.WriteLine(o);
+Action<string> logStr = log;       // contravariance
+logStr("Hi");
+```
+**Purpose**: Flexible assignments for collections and delegates.
+
+---
+
+### P64_DynamicOverloadResolution
+**Feature**: Overload resolution with `dynamic` at runtime.
+```csharp
+void Foo(int x)    => Console.WriteLine("int");
+void Foo(string s) => Console.WriteLine("string");
+
+dynamic d = 5;
+Foo(d);   // Foo(int) at runtime
+d = "hi";
+Foo(d);   // Foo(string) at runtime
+```
+**Purpose**: Demonstrates runtime dispatch of method overloads.
+
+---
+
+### P65_DynamicWithReflectionLike
+**Feature**: Using `dynamic` instead of reflection.
+```csharp
+dynamic obj = new { Name = "Alice", Age = 30 };
+Console.WriteLine(obj.Name); // late-bound, no compile-time type info
+```
+**Purpose**: Simplifies late-bound scenarios.
+
+---
+
+### P66_DelegatesVariance
+**Feature**: Variance for delegates.
+```csharp
+Func<string> getStr = () => "hello";
+Func<object> getObj = getStr; // covariance
+
+Action<object> actObj = o => Console.WriteLine(o);
+Action<string> actStr = actObj; // contravariance
+```
+**Purpose**: Greater flexibility in assigning delegates.
+
+---
+
+### P67_NamedArgsOverloadResolution
+**Feature**: Named arguments in overload resolution.
+```csharp
+void Foo(int x, string y) => Console.WriteLine("int,string");
+void Foo(string y, int x) => Console.WriteLine("string,int");
+
+Foo(1, "hi");                 // Foo(int,string)
+Foo(y: "hi", x: 1);           // named args disambiguate
+Foo(x: 1, y: "hi");           // explicit clarity
+```
+**Purpose**: Helps disambiguate between overloads and improves readability.
 
 ---
 
@@ -88,21 +116,17 @@ From the repo root:
 ```bash
 dotnet restore
 dotnet build
-dotnet run --project <ProjectFolderName>
+dotnet run --project P61_DynamicBasics
+# Or run another project, e.g. P62_NamedOptionalArgs, etc.
 ```
-*(Open any sample project folder—each one is a small console app showing one of the features above.)*
 
 ---
 
-## ✅ Tips & Notes
+## ✅ Summary
 
-- Prefer `dynamic` only when necessary (COM, dynamic sources). For regular code, static typing gives better tooling and safety.
-- Named/optional parameters are part of the *call site*; changing parameter names can be a breaking change for callers that use named args.
-- With variance, remember: **out = returns**, **in = inputs** (i.e., you can *output* `out T`, and *input* `in T`).
+C# 4.0 brought:
+- `dynamic` for runtime binding (great for COM interop).  
+- Named and optional parameters for cleaner, evolving APIs.  
+- Variance (`in` / `out`) for interfaces and delegates.  
+- Smarter overload resolution with dynamic and named args.  
 
----
-
-## 📖 References (for deeper reading)
-
-- C# 4.0 language specification highlights (dynamic binding, optional/named arguments, variance)  
-- MSDN / Learn docs on **No-PIA** (Embedded Interop Types) and COM interop improvements  
