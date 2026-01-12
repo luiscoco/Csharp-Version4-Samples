@@ -1,4 +1,4 @@
-# C# 4.0 Features – Sample Projects
+# C# 4.0 Features - Sample Projects
 
 This repository demonstrates the language features introduced in **C# version 4.0** (Visual Studio 2010 / .NET Framework 4).  
 C# 4.0 focused on interop, flexibility, and variance: the `dynamic` type, named/optional parameters, generic variance, and improved overload resolution.
