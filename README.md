@@ -4,19 +4,19 @@ This repository demonstrates the language features introduced in **C# version 4.
 C# 4.0 focused on interop, flexibility, and variance: the `dynamic` type, named/optional parameters, generic variance, and improved overload resolution.
 
 Projects included:
-- `P61_DynamicBasics`
-- `P62_NamedOptionalArgs`
-- `P63_GenericVariance_Interfaces`
-- `P64_DynamicOverloadResolution`
-- `P65_DynamicWithReflectionLike`
-- `P66_DelegatesVariance`
-- `P67_NamedArgsOverloadResolution`
+- `P65_DynamicBasics`
+- `P66_NamedOptionalArgs`
+- `P67_GenericVariance_Interfaces`
+- `P68_DynamicOverloadResolution`
+- `P69_DynamicWithReflectionLike`
+- `P70_DelegatesVariance`
+- `P71_NamedArgsOverloadResolution`
 
 ---
 
 ## 🚀 Features & Samples
 
-### P61_DynamicBasics
+### P65_DynamicBasics
 **Feature**: `dynamic` type – late binding at runtime.
 ```csharp
 dynamic x = "hello";
@@ -29,7 +29,7 @@ Console.WriteLine(x + 5);      // int addition at runtime
 
 ---
 
-### P62_NamedOptionalArgs
+### P66_NamedOptionalArgs
 **Feature**: Named and optional arguments.
 ```csharp
 void Print(string msg, int level = 1, bool timestamp = true)
@@ -44,7 +44,7 @@ Print(level: 3, msg: "Error", timestamp: false); // named, out of order
 
 ---
 
-### P63_GenericVariance_Interfaces
+### P67_GenericVariance_Interfaces
 **Feature**: Covariance (`out`) and contravariance (`in`) in generic interfaces.
 ```csharp
 IEnumerable<string> words = new List<string> { "one", "two" };
@@ -58,7 +58,7 @@ logStr("Hi");
 
 ---
 
-### P64_DynamicOverloadResolution
+### P68_DynamicOverloadResolution
 **Feature**: Overload resolution with `dynamic` at runtime.
 ```csharp
 void Foo(int x)    => Console.WriteLine("int");
@@ -73,7 +73,7 @@ Foo(d);   // Foo(string) at runtime
 
 ---
 
-### P65_DynamicWithReflectionLike
+### P69_DynamicWithReflectionLike
 **Feature**: Using `dynamic` instead of reflection.
 ```csharp
 dynamic obj = new { Name = "Alice", Age = 30 };
@@ -83,7 +83,7 @@ Console.WriteLine(obj.Name); // late-bound, no compile-time type info
 
 ---
 
-### P66_DelegatesVariance
+### P70_DelegatesVariance
 **Feature**: Variance for delegates.
 ```csharp
 Func<string> getStr = () => "hello";
@@ -96,7 +96,7 @@ Action<string> actStr = actObj; // contravariance
 
 ---
 
-### P67_NamedArgsOverloadResolution
+### P71_NamedArgsOverloadResolution
 **Feature**: Named arguments in overload resolution.
 ```csharp
 void Foo(int x, string y) => Console.WriteLine("int,string");
@@ -110,7 +110,7 @@ Foo(x: 1, y: "hi");           // explicit clarity
 
 ---
 
-## ▶ Build & Run
+## Build & Run
 
 From the repo root:
 ```bash
@@ -122,7 +122,7 @@ dotnet run --project P61_DynamicBasics
 
 ---
 
-## ✅ Summary
+## Summary
 
 C# 4.0 brought:
 - `dynamic` for runtime binding (great for COM interop).  
