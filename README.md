@@ -14,7 +14,7 @@ Projects included:
 
 ---
 
-## 🚀 Features & Samples
+## Features & Samples
 
 ### P65_DynamicBasics
 **Feature**: `dynamic` type – late binding at runtime.
